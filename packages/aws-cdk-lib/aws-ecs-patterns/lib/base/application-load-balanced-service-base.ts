@@ -7,7 +7,7 @@ import {
 } from '../../../aws-ecs';
 import {
   ApplicationListener, ApplicationLoadBalancer, ApplicationProtocol, ApplicationProtocolVersion, ApplicationTargetGroup,
-  IApplicationLoadBalancer, ListenerCertificate, ListenerAction, AddApplicationTargetsProps, SslPolicy,
+  IApplicationLoadBalancer, ListenerCertificate, ListenerAction, AddApplicationTargetsProps, SslPolicy, IpAddressType
 } from '../../../aws-elasticloadbalancingv2';
 import { IRole } from '../../../aws-iam';
 import { ARecord, IHostedZone, RecordTarget, CnameRecord } from '../../../aws-route53';
@@ -264,6 +264,12 @@ export interface ApplicationLoadBalancedServiceBaseProps {
    */
   readonly loadBalancerName?: string;
 
+    /**
+   * Specify if load balancer should have IPv6 enabled
+   *
+   * @default - Only IPv4 enabled.
+   */
+  readonly loadBalancerIpAddressType?: IpAddressType;
   /**
    * Whether ECS Exec should be enabled
    *
@@ -480,6 +486,7 @@ export abstract class ApplicationLoadBalancedServiceBase extends Construct {
       loadBalancerName: props.loadBalancerName,
       internetFacing,
       idleTimeout: props.idleTimeout,
+      ipAddressType: props.loadBalancerIpAddressType
     };
 
     const loadBalancer = props.loadBalancer ?? new ApplicationLoadBalancer(this, 'LB', lbProps);
